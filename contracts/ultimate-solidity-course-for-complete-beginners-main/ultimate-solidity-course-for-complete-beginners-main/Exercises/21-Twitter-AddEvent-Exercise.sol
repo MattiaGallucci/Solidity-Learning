@@ -24,6 +24,8 @@ contract Twitter {
     address public owner;
 
     // Define the events here 👇
+    event TweetCreated(uint256 id, address indexed user, string content, uint256 timestamp);
+    event TweetLiked(address indexed liker, address author, uint256 id, uint256 likes);
 
     constructor() {
         owner = msg.sender;
@@ -50,13 +52,14 @@ contract Twitter {
         });
 
         tweets[msg.sender].push(newTweet);
+        emit TweetCreated(newTweet.id, newTweet.author, newTweet.content, newTweet.timestamp);
     }
 
     function likeTweet(address author, uint256 id) external {  
         require(tweets[author][id].id == id, "TWEET DOES NOT EXIST");
 
         tweets[author][id].likes++;
-
+        emit TweetLiked(msg.sender, author, id, tweets[author][id].likes);
     }
 
     function unlikeTweet(address author, uint256 id) external {
